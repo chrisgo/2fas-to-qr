@@ -16,11 +16,15 @@ class AuthCode:
         self.name = twofas_service["name"]
         self.secret = twofas_service["secret"]
         self.token_type = twofas_service["otp"]["tokenType"]
+        self.label = twofas_service["otp"]["label"]
         if self.token_type != "TOTP":
             raise ValueError(
-                f"Unsupported token type {self.token_type} for account {self.name}")
+                f"Unsupported token type {self.token_type} for account {self.name}"
+            )
         self.account = twofas_service["otp"].get("account", self.name)
-        self.otpauth = f"otpauth://totp/{self.account}?secret={self.secret}&issuer={self.name}"
+        self.otpauth = (
+            f"otpauth://totp/{self.account}?secret={self.secret}&issuer={self.name}"
+        )
         self.qr = qrcode.make(self.otpauth)
 
     def save_image(self, path):
@@ -60,7 +64,7 @@ if __name__ == "__main__":
             _eprint(error)
             sys.exit(1)
 
-        out_file = f"{output_path}/qr_{idx}_{sanitize_filename(auth_code.name)}.png"
+        out_file = f"{output_path}/qr_{idx}_{sanitize_filename(auth_code.name)}_{sanitize_filename(auth_code.label)}.png"
         auth_code.save_image(out_file)
 
     print(f"Exported {len(services)} QR codes")
