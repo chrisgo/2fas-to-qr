@@ -16,7 +16,13 @@ class AuthCode:
         self.name = twofas_service["name"]
         self.secret = twofas_service["secret"]
         self.token_type = twofas_service["otp"]["tokenType"]
-        self.label = twofas_service["otp"]["label"]
+        #self.label = twofas_service["otp"]["label"]
+        if "label" in twofas_service["otp"]:
+            self.label = twofas_service["otp"]["label"]
+        elif "account" in twofas_service["otp"]:
+            self.label = twofas_service["otp"]["account"]
+        else:
+            self.label = twofas_service["otp"]["issuer"]
         if self.token_type != "TOTP":
             raise ValueError(
                 f"Unsupported token type {self.token_type} for account {self.name}"
